@@ -29,6 +29,6 @@
 
   (q "{ game_by_id(id: \"1237\") { name designers { name }}}")
 
-
+  (q "{ game_by_id(id: \"1237\") { name designers { name games { name }}}}")
 
   )

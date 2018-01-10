@@ -22,7 +22,7 @@
   (let [{:keys [id]} designer]
     (->> games-map
          vals
-         (filter #(->> % :designers (contains? id))))))
+         (filter #(-> % :designers (contains? id))))))
 
 (defn entity-map
   [data k]
