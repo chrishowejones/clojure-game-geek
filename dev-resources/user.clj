@@ -49,8 +49,7 @@
 
 (defn stop
   []
-  (alter-var-root #'server stop-server)
-  )
+  (alter-var-root #'server stop-server))
 
 (comment
 
