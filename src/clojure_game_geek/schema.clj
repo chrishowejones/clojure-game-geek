@@ -54,6 +54,22 @@
   (fn [_ _ game-rating]
    (get games-map (:game_id game-rating))))
 
+(defn filter-members
+  [members-map]
+  (fn [_ {:keys [member_name]} _]
+    (let [members (vals members-map)]
+      (if member_name
+        (filter #(re-find (re-pattern member_name) (:member_name %)) members)
+        members))))
+
+(defn filter-games
+  [games-map]
+  (fn [_ {:keys [name]} _]
+    (let [games (vals games-map)]
+      (if name
+        (filter #(re-find (re-pattern name) (:name %)) games)
+        games))))
+
 (defn resolver-map
   [component]
   (let [cgg-data (-> (io/resource "cgg-data.edn")
@@ -64,6 +80,8 @@
         designers-map (entity-map cgg-data :designers)]
     {:query/game-by-id (partial resolve-element-by-id games-map)
      :query/member-by-id (partial resolve-element-by-id members-map)
+     :query/all-members (filter-members members-map)
+     :query/all-games (filter-games games-map)
      :BoardGame/designers (partial resolve-board-game-designers designers-map)
      :BoardGame/rating-summary (rating-summary cgg-data)
      :GameRating/game (game-rating->game games-map)
@@ -91,7 +109,7 @@
 
 (comment
 
-  (resolver-map nil)
+  ((:query/all-members (resolver-map nil)) nil {:id "37"} nil)
   (-> {}
       load-schema
       :QueryRoot

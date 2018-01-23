@@ -71,5 +71,20 @@
    :description "Select a ClojureGameGeek Member by their unique id, if it exists."
    :args
    {:id {:type (non-null ID)}}
-   :resolve :query/member-by-id}}
+   :resolve :query/member-by-id}
+
+  :all_members
+  {:type (list :Member)
+   :description "A collection of members, possibly filtered by regex on member name."
+   :args
+   {:member_name {:type String}}
+   :resolve :query/all-members}
+
+  :all_games
+  {:type (list :BoardGame)
+   :description "A collection of games, possibly filtered by regex on game name."
+   :args
+   {:name {:type String}}
+   :resolve :query/all-games}
+  }
  }
