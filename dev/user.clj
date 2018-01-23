@@ -35,9 +35,9 @@
 
 (defn start
   []
-  (alter-var-root #'system component/start-system)
-  (browse-url "http://localhost:8888/")
-  :started)
+  (let [system (alter-var-root #'system component/start-system)]
+    (browse-url "http://localhost:8888/")
+    system))
 
 (defn stop
   []
@@ -58,6 +58,8 @@
   (start)
 
   system
+
+  (stop)
 
   (alter-var-root #'system component/start-system)
 
