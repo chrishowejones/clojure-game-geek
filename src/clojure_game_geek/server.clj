@@ -21,3 +21,9 @@
   []
   {:server (component/using (map->Server {})
                             [:schema-provider])})
+
+(comment
+
+  (new-server)
+
+  )

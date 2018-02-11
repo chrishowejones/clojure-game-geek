@@ -45,43 +45,12 @@
 
 (comment
 
-  (q "{ game_by_id(id: \"1234\") { id name summary}}")
-
-  (q "{ game_by_id(id: \"1237\") { name designers { name }}}")
-
-  (q "{ game_by_id(id: \"1237\") { name designers { name url games { name }}}}")
-
-  (q "{ member_by_id(id: \"37\") { member_name ratings { rating game { name }} }}")
-
-  (alter-var-root #'system (constantly (system/new-system)))
-
   (start)
 
-  system
+  (:db (system/new-system))
 
   (stop)
 
-  (alter-var-root #'system component/start-system)
-
-  (-> system :schema-provider :schema)
-
-  (stop)
-
-  (list 1 2 3 4)
-  '(1 2 3 4)
-
-  (def  stringify (fn [x] (str x)))
-  (defn stringify2 [x] (str x))
-  (stringify 1)
-
-  (component/stop-system system)
-
-  (hash-map :a 2 "b" 2)
-  (get {:a 1 "b" "2"} "b")
-  ("b" { "b" "2"} )
-
-  (Integer/parseInt "2")
-
-  (filter :a [{:a 1} {:a 2 :b 3} {:b 3}])
+  (-> system :schema-provider :db)
 
   )
