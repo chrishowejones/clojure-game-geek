@@ -47,10 +47,10 @@
 
   (start)
 
-  (:db (system/new-system))
+
 
   (stop)
 
-  (-> system :schema-provider :db)
+  system
 
   )
