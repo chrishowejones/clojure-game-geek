@@ -83,6 +83,22 @@
       (filter #(re-find (re-pattern name) (:name %)) games)
       games)))
 
+(defn ^:private apply-game-rating
+  [game-ratings game-id member-id rating]
+  (->> game-ratings
+       (remove #(and (= game-id (:game_id %))
+                     (= member-id (:member_id %))))
+       (cons {:game_id game-id
+              :member_id member-id
+              :rating rating})))
+
+(defn upsert-game-rating
+  "Adds a new game rating, or changes the value of an existing game rating"
+  [db game-id member-id rating]
+  (-> db
+      :data
+      (swap! update :ratings apply-game-rating game-id member-id rating)))
+
 (comment
 
   (new-db)
@@ -91,11 +107,8 @@
   (find-game-by-id db "1237")
   (find-member-by-id (->> user/system :schema-provider :db) "37")
 
+  (upsert-game-rating (->> user/system :schema-provider :db) "1234" "2812" 4)
 
-
-  (list-designers-for-game db "1237")
-  (list-games-for-designer db "200")
-  (list-ratings-for-game db "1234")
-  (list-ratings-for-member db "1410")
+  (->> user/system :schema-provider :db)
 
   )

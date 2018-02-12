@@ -3,6 +3,7 @@
   (:require [clojure.edn :as edn]
             [clojure.java.io :as io]
             [com.stuartsierra.component :as component]
+            [com.walmartlabs.lacinia.resolve :refer [resolve-as]]
             [com.walmartlabs.lacinia.schema :as schema]
             [com.walmartlabs.lacinia.util :as util]
             [clojure-game-geek.db :as db]))
@@ -60,6 +61,29 @@
   (fn [_ _ designer]
     (db/list-games-for-designer db (:id designer))))
 
+(defn rate-game
+  [db]
+  (fn [_ args _]
+    (let [{game-id :game_id
+           member-id :member_id
+           rating :rating} args
+          game (db/find-game-by-id db game-id)
+          member (db/find-member-by-id db member-id)
+          upsert-rating (fn [db game game-id member-id rating]
+                          (db/upsert-game-rating db game-id member-id rating)
+                          game)]
+      (cond
+        (nil? game)
+        (resolve-as nil {:message "Game not found."
+                         :status 404})
+        (nil? member)
+        (resolve-as nil {:message "Member not found"
+                         :status 404})
+        (not (<= 1 rating 5))
+        (resolve-as nil {:message "Rating must be between 1 and 5"})
+        :else
+        (upsert-rating db game game-id member-id rating)))))
+
 (defn resolver-map
   [component]
   (let [db (:db component)]
@@ -67,6 +91,7 @@
      :query/member-by-id (member-by-id db)
      :query/all-members (all-members db)
      :query/all-games (all-games db)
+     :mutation/rate-game (rate-game db)
      :BoardGame/designers (board-game-designers db)
      :BoardGame/rating-summary (rating-summary db)
      :GameRating/game (game-rating->game db)
