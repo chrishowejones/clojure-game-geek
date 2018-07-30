@@ -67,6 +67,6 @@
   (q "mutation { rate_game(member_id: \"1410\", game_id: \"1234\") { name rating_summary { count average }}}")
   (q "mutation { rate_game(member_id: \"1410\", game_id: \"1234\", rating: \"Great!\") { name rating_summary { count average }}}")
 
-  # added a change
+  ;; added a change
 
   )

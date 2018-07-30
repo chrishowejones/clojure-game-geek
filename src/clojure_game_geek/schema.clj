@@ -84,6 +84,32 @@
         :else
         (upsert-rating db game game-id member-id rating)))))
 
+(defn rating-summary
+  [cgg-data]
+  (fn [_ _ board-game]
+    (let [id (:id board-game)
+          ratings (->> cgg-data
+                       :ratings
+                       (filter #(= id (:game_id %)))
+                       (map :rating))
+          n (count ratings)]
+      {:count n
+       :average (if (zero? n)
+                  0
+                  (/ (apply + ratings)
+                     (float n)))})))
+
+(defn member-ratings
+  [ratings-map]
+  (fn [_ _ member]
+    (let [id (:id member)]
+      (filter #(= id (:member_id %)) ratings-map))))
+
+(defn game-rating->game
+  [games-map]
+  (fn [_ _ game-rating]
+   (get games-map (:game_id game-rating))))
+
 (defn resolver-map
   [component]
   (let [db (:db component)]
@@ -130,8 +156,6 @@
   ((board-game-designers (->> user/system :schema-provider :db)) nil nil {:id "1237"})
 
   (-> {}
-      load-schema
-      :QueryRoot
-      :fields)
+      load-schema)
 
   )
